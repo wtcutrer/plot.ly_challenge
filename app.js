@@ -1,3 +1,17 @@
+//Create a function to input data from the json
+function placeData(sample) {
+    d3.json("samples.json").then((data) => {
+      var metadata= data.metadata;
+      var resultsarray= metadata.filter(sampleobject => 
+        sampleobject.id == sample);
+      var result= resultsarray[0]
+      var panel = d3.select("#sample-metadata");
+      panel.html("");
+      Object.entries(result).forEach(([key, value]) => {
+        panel.append("h6").text(`${key}: ${value}`);
+      });
+    });
+  }
 
 //create a function to input plots 
 function createPlots(sample) {
@@ -16,16 +30,16 @@ d3.json("samples.json").then((data) => {
   //Create a bar chart with the data from dropdown
   var bar_data =[
     {
-      y:ids.slice(0,5).map(otuID => `OTU ${otuID}`).reverse(),
-      x:values.slice(0,5).reverse(),
-      text:labels.slice(0,5).reverse(),
+      y:ids.slice(0, 10).map(otuID => `OTU ${otuID}`).reverse(),
+      x:values.slice(0,10).reverse(),
+      text:labels.slice(0,10).reverse(),
       type:"bar",
       orientation:"h",
     }
   ];
 
   var barLayout = {
-    title: "Top 5 Bacteria Cultures Found",
+    title: "Top 10 Bacteria Cultures Found",
     margin: { t: 30, l: 150 }
   };
 
