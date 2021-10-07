@@ -1,13 +1,46 @@
+
+//Create a function for the Dropdown menu
+function init() {
+
+ 
+
+  
+  // Use the list of sample names to populate the select options
+  d3.json("samples.json").then((data) => {
+    var testNames = data.names;
+   
+    // Grab a reference and populate data
+    var dropdown = d3.select("#selDataset");
+    testNames.forEach((sample) => {
+      dropdown
+        .append("option")
+        .text(sample)
+        .attr("value", sample);
+    });
+  
+    // Use the first sample from the list to build the initial plots
+    const firstSample = testNames[0];
+    createPlots(firstSample);
+    placeData(firstSample);
+  });
+  }
+  
+  function newSelection(newSample) {
+  // Fetch new data each time a new sample is selected
+  createPlots(newSample);
+  placeData(newSample);
+  }
+  
+  // Initialize the dashboard
+  init();
+
 //Create a function to input data from the json
 function placeData(sample) {
     d3.json("samples.json").then((data) => {
       var metadata= data.metadata;
-      var resultsarray= metadata.filter(sampleobject => 
-        sampleobject.id == sample);
-      var result= resultsarray[0]
-      var panel = d3.select("#sample-metadata");
-      panel.html("");
-      Object.entries(result).forEach(([key, value]) => {
+      var result= metadata.filter(testobj => testobj.id == sample);
+      var panel = d3.select("#sample-metadata").html("");
+      Object.entries(result[0]).forEach(([key, value]) => {
         panel.append("h6").text(`${key}: ${value}`);
       });
     });
@@ -18,10 +51,9 @@ function createPlots(sample) {
 
 // Use D3 to grab plot data
 d3.json("samples.json").then((data) => {
-  var samples= data.samples;
-  var resultsarray= samples.filter(sampleobject => 
-      sampleobject.id == sample);
-  var result= resultsarray[0]
+  var barData = data.samples;
+  var resultsBar= barData.filter(testobj => testobj.id == sample);
+  var result= resultsBar[0]
   var ids = result.otu_ids;
   var labels = result.otu_labels;
   var values = result.sample_values;
@@ -44,37 +76,28 @@ d3.json("samples.json").then((data) => {
   };
 
   Plotly.newPlot("bar", bar_data, barLayout);
+
+
+  //Create bubble plot
+  var Bubble = {
+    title: "Top 10 Bacteria Bubble Plot",
+    margin: { t: 0 },
+    hovermode: "closest",
+    };
+
+    var DataBubble = [ 
+    {
+      x: ids,
+      y: values,
+      text: labels,
+      mode: "markers",
+      marker: {
+        color: ids,
+        size: values,
+        }
+    }
+  ];
+
+  Plotly.newPlot("bubble", DataBubble, Bubble);
 });
 }
-
-//Create a function for the Dropdown menu
-  function init() {
-  // Grab a reference to the dropdown select element
-  var selector = d3.select("#selDataset");
-  
-  // Use the list of sample names to populate the select options
-  d3.json("samples.json").then((data) => {
-    var sampleNames = data.names;
-    sampleNames.forEach((sample) => {
-      selector
-        .append("option")
-        .text(sample)
-        .property("value", sample);
-    });
-  
-    // Use the first sample from the list to build the initial plots
-    const firstSample = sampleNames[0];
-    createPlots(firstSample);
-    placeData(firstSample);
-  });
-  }
-  
-  function newSelection(newSample) {
-  // Fetch new data each time a new sample is selected
-  createPlots(newSample);
-  placeData(newSample);
-  }
-  
-  // Initialize the dashboard
-  init();
-
