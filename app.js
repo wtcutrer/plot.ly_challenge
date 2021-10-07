@@ -71,8 +71,9 @@ d3.json("samples.json").then((data) => {
   ];
 
   var barLayout = {
-    title: "Top 10 Bacteria Cultures Found",
-    margin: { t: 30, l: 150 }
+    title: "Top 10 Belly Button Bacteria",
+    height: 550, 
+    width: 850
   };
 
   Plotly.newPlot("bar", bar_data, barLayout);
@@ -80,9 +81,13 @@ d3.json("samples.json").then((data) => {
 
   //Create bubble plot
   var Bubble = {
-    title: "Top 10 Bacteria Bubble Plot",
-    margin: { t: 0 },
-    hovermode: "closest",
+    title: "Bubble Chart Comparison",
+    showlegend: false,
+    height: 550,
+    width: 1300,
+    xaxis: {
+      title: "OTU ID"
+     }
     };
 
     var DataBubble = [ 
